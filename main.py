@@ -16,7 +16,7 @@ _CONFIG_SCHEMA = {
     "pics_dir": {
         "description": "图片存放目录（绝对路径）",
         "type": "string",
-        "default": os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "pics"),
+        "default": os.path.join(os.path.expanduser("~"), "Desktop"),
     },
     "triggers": {
         "description": "触发命令列表",
