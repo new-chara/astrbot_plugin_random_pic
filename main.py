@@ -14,9 +14,9 @@ from astrbot.core.utils.astrbot_path import get_astrbot_data_path
 # 配置 schema —— 定义 Web 面板上显示的配置项
 _CONFIG_SCHEMA = {
     "pics_dir": {
-        "description": "图片存放目录（绝对路径）",
+        "description": "图片存放目录（绝对路径，务必填写 Linux 下可访问的路径）",
         "type": "string",
-        "default": os.path.join(os.path.expanduser("~"), "Desktop"),
+        "default": os.path.join(get_astrbot_data_path(), "random_pics"),
     },
     "triggers": {
         "description": "触发命令列表",
@@ -75,13 +75,18 @@ class RandomPicPlugin(Star):
     def _get_images(self) -> list[str]:
         """获取图片目录下所有图片文件"""
         valid_exts = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
-        if not os.path.exists(self._cfg.pics_dir):
+        pics_dir = self._cfg.pics_dir
+        if not pics_dir or not os.path.exists(pics_dir):
             return []
-        return [
-            os.path.join(self._cfg.pics_dir, f)
-            for f in os.listdir(self._cfg.pics_dir)
-            if os.path.splitext(f)[1].lower() in valid_exts
-        ]
+        try:
+            return [
+                os.path.join(pics_dir, f)
+                for f in os.listdir(pics_dir)
+                if os.path.splitext(f)[1].lower() in valid_exts
+            ]
+        except PermissionError:
+            logger.warning(f"[RandomPic] 无权限读取图片目录: {pics_dir}")
+            return []
 
     @filter.command("randompic")
     async def randompic(self, event: AstrMessageEvent, count: int = 1):
