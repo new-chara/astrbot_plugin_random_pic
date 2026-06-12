@@ -82,11 +82,27 @@ class RandomPicPlugin(Star):
             return [
                 os.path.join(pics_dir, f)
                 for f in os.listdir(pics_dir)
-                if os.path.splitext(f)[1].lower() in valid_exts
+                if os.path.splitext(f)[1]。lower() in valid_exts
             ]
         except PermissionError:
             logger.warning(f"[RandomPic] 无权限读取图片目录: {pics_dir}")
             return []
+
+    def _get_images(self) -> list[str]:
+    valid_exts = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
+
+    pics_dir = self._cfg.pics_dir
+
+    logger.info(f"[RandomPic] pics_dir = {pics_dir}")
+    logger.info(f"[RandomPic] exists = {os.path.exists(pics_dir)}")
+
+    if os.path.exists(pics_dir):
+        logger.info(f"[RandomPic] files = {os.listdir(pics_dir)}")
+
+    if not pics_dir or not os.path.exists(pics_dir):
+        return []
+
+    ...
 
     @filter.command("randompic")
     async def randompic(self, event: AstrMessageEvent, count: int = 1):
