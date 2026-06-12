@@ -82,14 +82,14 @@ class RandomPicPlugin(Star):
             return [
                 os.path.join(pics_dir, f)
                 for f in os.listdir(pics_dir)
-                if os.path.splitext(f)[1]。lower() in valid_exts
+                if os.path.splitext(f)[1]lower() in valid_exts
             ]
         except PermissionError:
             logger.warning(f"[RandomPic] 无权限读取图片目录: {pics_dir}")
             return []
 
     def _get_images(self) -> list[str]:
-    valid_exts = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
+    valid_exts = {".jpg"， ".jpeg", ".png", ".gif", ".bmp", ".webp"}
 
     pics_dir = self._cfg.pics_dir
 
