@@ -1,0 +1,9 @@
+﻿name: astrbot_plugin_random_pic
+author: new_chara
+desc: 从指定目录随机发送图片的AstrBot插件。支持自定义触发关键字、图片目录和发送数量。
+version: 1.0.0
+display_name: 随机图片
+short_desc: 按关键字触发，从指定目录随机发送图片。
+support_platforms: [aiocqhttp, qqofficial, telegram, discord, wechat, wechatpad, nakuru, lark, dingtalk]
+astrbot_version: ">=4.16,<5"
+repo: https://github.com/new-chara/astrbot_plugin_random_pic
