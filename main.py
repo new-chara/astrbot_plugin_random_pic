@@ -20,8 +20,16 @@ class RandomPicPlugin(Star):
             config = await self.context.get_config()
         except Exception:
             config = {}
+
+        # 支持旧版 "keyword" 和新版 "keywords"（textarea，每行一个）两种配置
+        raw = config.get("keywords", config.get("keyword", "随机图片"))
+        if isinstance(raw, str):
+            keywords = [k.strip() for k in raw.split("\n") if k.strip()]
+        else:
+            keywords = list(raw) if raw else []
+
         return {
-            "keyword": config.get("keyword", "随机图片"),
+            "keywords": keywords,
             "image_dir": config.get("image_dir", "./random_pic"),
             "count": max(1, int(config.get("count", 1))),
             "recursive": config.get("recursive", True),
@@ -91,14 +99,14 @@ class RandomPicPlugin(Star):
 
     @filter.event_message_type(EventMessageType.GROUP_MESSAGE | EventMessageType.PRIVATE_MESSAGE)
     async def on_keyword_trigger(self, event: AstrMessageEvent):
-        """监听消息，匹配配置的关键字触发随机图片发送。"""
+        """监听消息，匹配配置的任意关键字触发随机图片发送。"""
         config = await self._get_config()
-        keyword = config["keyword"].strip()
-        if not keyword:
+        keywords = config["keywords"]
+        if not keywords:
             return
 
         msg = event.message_str.strip()
-        if msg != keyword:
+        if msg not in keywords:
             return
 
         async for result in self._send_random_images(event, config):
