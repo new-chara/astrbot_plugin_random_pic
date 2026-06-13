@@ -21,7 +21,7 @@ class RandomPicPlugin(Star):
         logger.info(f"[RandomPic] 插件初始化，配置: {dict(self.config)}")
 
     def _get_config(self) -> dict:
-        """????????????????"""
+        """从插件配置中读取参数，带默认值。"""
         raw = self.config.get("keywords") or self.config.get("keyword") or "????"
         if isinstance(raw, str):
             text = raw.replace("\r\n", "\n").replace("?", ",")
@@ -50,9 +50,9 @@ class RandomPicPlugin(Star):
         }
 
     def _parse_count(self, msg: str, keywords: list, max_count: int) -> tuple:
-        """??????????????? (matched_keyword, count)?
+        """从消息中解析关键字和数量。返回 (matched_keyword, count)。
 
-        ?????“关键字”或“关键字 N”。
+        支持“关键字”或“关键字 N”。
         N 超过 max_count 时截断到 max_count。
         """
         msg = msg.strip()
