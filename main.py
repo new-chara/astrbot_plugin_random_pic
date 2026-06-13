@@ -22,9 +22,9 @@ class RandomPicPlugin(Star):
 
     def _get_config(self) -> dict:
         """从插件配置中读取参数，带默认值。"""
-        raw = self.config.get("keywords") or self.config.get("keyword") or "????"
+        raw = self.config.get("keywords") or self.config.get("keyword") or "随机图片"
         if isinstance(raw, str):
-            text = raw.replace("\r\n", "\n").replace("?", ",")
+            text = raw.replace("\r\n", "\n").replace("，", ",")
             if "\n" in text:
                 keywords = [k.strip() for k in text.split("\n") if k.strip()]
             else:
