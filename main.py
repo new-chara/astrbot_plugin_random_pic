@@ -33,7 +33,12 @@ class RandomPicPlugin(Star):
         # 支持旧版 "keyword" 和新版 "keywords"（textarea，每行一个）两种配置
         raw = config.get("keywords") or config.get("keyword") or "随机图片"
         if isinstance(raw, str):
-            keywords = [k.strip() for k in raw.replace("\r\n", "\n").split("\n") if k.strip()]
+            # 支持逗号、换行、中文逗号分隔
+            text = raw.replace("\r\n", "\n").replace("，", ",")
+            if "\n" in text:
+                keywords = [k.strip() for k in text.split("\n") if k.strip()]
+            else:
+                keywords = [k.strip() for k in text.split(",") if k.strip()]
         elif isinstance(raw, list):
             keywords = [str(k).strip() for k in raw if str(k).strip()]
         else:

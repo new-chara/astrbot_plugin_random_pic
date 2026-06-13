@@ -17,8 +17,8 @@
     "default": true
   },
   "keywords": {
-    "description": "触发关键字，每行一个。发送任意一个即可触发插件（留空则仅支持 /randompic 命令）",
-    "type": "text",
+    "description": "触发关键字，多个用逗号分隔，例如：随机图片,来点图,看看图。留空则仅支持 /randompic 命令",
+    "type": "string",
     "default": "随机图片",
     "obvious_hint": true
   }
