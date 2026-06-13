@@ -21,10 +21,10 @@ class RandomPicPlugin(Star):
         logger.info(f"[RandomPic] 插件初始化，配置: {dict(self.config)}")
 
     def _get_config(self) -> dict:
-        """从插件配置中读取参数，带默认值。"""
-        raw = self.config.get("keywords") or self.config.get("keyword") or "随机图片"
+        """????????????????"""
+        raw = self.config.get("keywords") or self.config.get("keyword") or "????"
         if isinstance(raw, str):
-            text = raw.replace("\r\n", "\n").replace("，", ",")
+            text = raw.replace("\r\n", "\n").replace("?", ",")
             if "\n" in text:
                 keywords = [k.strip() for k in text.split("\n") if k.strip()]
             else:
@@ -36,6 +36,7 @@ class RandomPicPlugin(Star):
 
         image_dir = self.config.get("image_dir") or DEFAULT_IMAGE_DIR
         count = max(1, int(self.config.get("count", 1)))
+        max_count = max(1, int(self.config.get("max_count", 3)))
         recursive = self.config.get("recursive", True)
         if isinstance(recursive, str):
             recursive = recursive.lower() in ("true", "1", "yes")
@@ -44,8 +45,29 @@ class RandomPicPlugin(Star):
             "keywords": keywords,
             "image_dir": image_dir,
             "count": count,
+            "max_count": max_count,
             "recursive": recursive,
         }
+
+    def _parse_count(self, msg: str, keywords: list, max_count: int) -> tuple:
+        """??????????????? (matched_keyword, count)?
+
+        ?????“关键字”或“关键字 N”。
+        N 超过 max_count 时截断到 max_count。
+        """
+        msg = msg.strip()
+        for kw in keywords:
+            if msg == kw:
+                return (kw, None)
+            if msg.startswith(kw + " "):
+                tail = msg[len(kw):].strip()
+                try:
+                    n = int(tail)
+                    if n > 0:
+                        return (kw, min(n, max_count))
+                except ValueError:
+                    pass
+        return (None, None)
 
     def _collect_images(self, image_dir: str, recursive: bool) -> list:
         """Collect all image file paths from the given directory.
@@ -102,8 +124,18 @@ class RandomPicPlugin(Star):
 
     @filter.command("randompic")
     async def command_random_pic(self, event: AstrMessageEvent):
-        """使用 /randompic 命令触发随机图片发送。"""
+        """使用 /randompic 命令触发，可带数量参数。
+        例如 /randompic 或 /randompic 3
+        """
         config = self._get_config()
+        args = event.get_command_args().strip()
+        if args:
+            try:
+                n = int(args)
+                if n > 0:
+                    config["count"] = min(n, config["max_count"])
+            except ValueError:
+                pass
         async for result in self._send_random_images(event, config):
             yield result
 
@@ -111,15 +143,21 @@ class RandomPicPlugin(Star):
 
     @filter.event_message_type(EventMessageType.GROUP_MESSAGE | EventMessageType.PRIVATE_MESSAGE)
     async def on_keyword_trigger(self, event: AstrMessageEvent):
-        """监听消息，匹配配置的任意关键字触发随机图片发送。"""
+        """监听消息，匹配配置的任意关键字触发随机图片发送。
+        支持“关键字 N”格式指定发送数量。
+        """
         config = self._get_config()
         keywords = config["keywords"]
         if not keywords:
             return
 
-        msg = event.message_str.strip()
-        if msg not in keywords:
+        matched, count = self._parse_count(
+            event.message_str, keywords, config["max_count"]
+        )
+        if matched is None:
             return
+        if count is not None:
+            config["count"] = count
 
         async for result in self._send_random_images(event, config):
             yield result

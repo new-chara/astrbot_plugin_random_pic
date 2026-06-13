@@ -11,6 +11,12 @@
     "default": 1,
     "obvious_hint": true
   },
+  "max_count": {
+    "description": "????????????????????? 5???? 5 ??",
+    "type": "int",
+    "default": 3,
+    "obvious_hint": true
+  },
   "recursive": {
     "description": "是否递归搜索子目录中的图片",
     "type": "bool",
