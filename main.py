@@ -15,25 +15,15 @@ DEFAULT_IMAGE_DIR = str(_PLUGIN_DIR / "random_pic")
 
 
 class RandomPicPlugin(Star):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context, config: dict = None):
         super().__init__(context)
+        self.config = config or {}
+        logger.info(f"[RandomPic] 插件初始化，配置: {dict(self.config)}")
 
-    async def _get_config(self) -> dict:
-        """Load and return plugin config, with fallback defaults."""
-        try:
-            config = await self.context.get_config()
-            if not isinstance(config, dict):
-                config = dict(config) if config else {}
-        except Exception:
-            config = {}
-
-        # 打印原始配置用于调试
-        logger.info(f"[RandomPic] 原始配置: {dict(config)}")
-
-        # 支持旧版 "keyword" 和新版 "keywords"（textarea，每行一个）两种配置
-        raw = config.get("keywords") or config.get("keyword") or "随机图片"
+    def _get_config(self) -> dict:
+        """从插件配置中读取参数，带默认值。"""
+        raw = self.config.get("keywords") or self.config.get("keyword") or "随机图片"
         if isinstance(raw, str):
-            # 支持逗号、换行、中文逗号分隔
             text = raw.replace("\r\n", "\n").replace("，", ",")
             if "\n" in text:
                 keywords = [k.strip() for k in text.split("\n") if k.strip()]
@@ -44,16 +34,11 @@ class RandomPicPlugin(Star):
         else:
             keywords = []
 
-        image_dir = config.get("image_dir") or DEFAULT_IMAGE_DIR
-        count = max(1, int(config.get("count", 1)))
-        recursive = config.get("recursive", True)
+        image_dir = self.config.get("image_dir") or DEFAULT_IMAGE_DIR
+        count = max(1, int(self.config.get("count", 1)))
+        recursive = self.config.get("recursive", True)
         if isinstance(recursive, str):
             recursive = recursive.lower() in ("true", "1", "yes")
-
-        logger.info(
-            f"[RandomPic] 配置加载: keywords={keywords}, "
-            f"image_dir={image_dir}, count={count}, recursive={recursive}"
-        )
 
         return {
             "keywords": keywords,
@@ -118,7 +103,7 @@ class RandomPicPlugin(Star):
     @filter.command("randompic")
     async def command_random_pic(self, event: AstrMessageEvent):
         """使用 /randompic 命令触发随机图片发送。"""
-        config = await self._get_config()
+        config = self._get_config()
         async for result in self._send_random_images(event, config):
             yield result
 
@@ -127,7 +112,7 @@ class RandomPicPlugin(Star):
     @filter.event_message_type(EventMessageType.GROUP_MESSAGE | EventMessageType.PRIVATE_MESSAGE)
     async def on_keyword_trigger(self, event: AstrMessageEvent):
         """监听消息，匹配配置的任意关键字触发随机图片发送。"""
-        config = await self._get_config()
+        config = self._get_config()
         keywords = config["keywords"]
         if not keywords:
             return
