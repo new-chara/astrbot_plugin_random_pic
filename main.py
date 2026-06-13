@@ -27,6 +27,9 @@ class RandomPicPlugin(Star):
         except Exception:
             config = {}
 
+        # 打印原始配置用于调试
+        logger.info(f"[RandomPic] 原始配置: {dict(config)}")
+
         # 支持旧版 "keyword" 和新版 "keywords"（textarea，每行一个）两种配置
         raw = config.get("keywords") or config.get("keyword") or "随机图片"
         if isinstance(raw, str):
