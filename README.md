@@ -18,7 +18,7 @@
 | 配置项 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
 | keywords | text | 随机图片 | 触发关键字，每行一个。发送任意一个即可触发。留空则仅支持 /randompic 命令 |
-| image_dir | string | ./random_pic | 图片存放目录，支持相对路径和绝对路径 |
+| image_dir | string | （留空） | 图片存放目录的绝对路径。留空则自动使用插件目录下的 random_pic 文件夹 |
 | count | int | 1 | 每次发送的图片数量 |
 | recursive | bool | true | 是否搜索子目录中的图片 |
 
@@ -28,8 +28,8 @@
 
 ### 第一步：准备图片
 
-插件安装后，会自动包含一个 `random_pic` 文件夹，你可以直接将图片放进去。
-也可以在配置中将 `image_dir` 改为其他目录。
+插件安装后会自动包含一个 `random_pic` 文件夹，直接将图片放进去即可，无需额外配置路径。
+如需使用其他目录，在配置中填写该目录的绝对路径。
 
 **支持的图片格式**：`.jpg` `.jpeg` `.png` `.gif` `.webp` `.bmp`（不区分大小写）
 
@@ -48,21 +48,21 @@ random_pic/
 
 ### 第二步：配置图片目录
 
-在 WebUI 中配置 `image_dir` 指向你的图片目录。默认为插件目录下的 `random_pic` 文件夹。
+如需使用其他目录，在 WebUI 中将 `image_dir` 设置为该目录的绝对路径。留空则自动使用插件自带的 `random_pic` 文件夹。
 
-**其他路径写法举例**：
+**绝对路径写法举例**：
 
-- 图片放在 AstrBot 目录下：
-  ```
-  ./random_pic
-  ```
-- Windows 下图片在 D 盘：
+- Windows：
   ```
   D:/images/my_pics
   ```
-- Linux / Docker 下图片在 `/data/pics`：
+- Linux：
   ```
-  /data/pics
+  /home/user/my_pics
+  ```
+- Docker 容器内：
+  ```
+  /data/images
   ```
 
 ### 第三步：配置触发关键字

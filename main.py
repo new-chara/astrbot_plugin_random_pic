@@ -9,6 +9,10 @@ from astrbot.api import logger
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp"}
 
+# 插件自身目录下的 random_pic 文件夹（绝对路径）
+_PLUGIN_DIR = Path(__file__).parent
+DEFAULT_IMAGE_DIR = str(_PLUGIN_DIR / "random_pic")
+
 
 class RandomPicPlugin(Star):
     def __init__(self, context: Context):
@@ -30,7 +34,7 @@ class RandomPicPlugin(Star):
 
         return {
             "keywords": keywords,
-            "image_dir": config.get("image_dir", "./random_pic"),
+            "image_dir": config.get("image_dir") or DEFAULT_IMAGE_DIR,
             "count": max(1, int(config.get("count", 1))),
             "recursive": config.get("recursive", True),
         }
