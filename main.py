@@ -89,7 +89,7 @@ class RandomPicPlugin(Star):
 
     # ── 关键字触发监听 ────────────────────────────────────────────
 
-    @filter.event_message_type(EventMessageType.GROUP_MESSAGE, EventMessageType.PRIVATE_MESSAGE)
+    @filter.event_message_type(EventMessageType.GROUP_MESSAGE | EventMessageType.PRIVATE_MESSAGE)
     async def on_keyword_trigger(self, event: AstrMessageEvent):
         """监听消息，匹配配置的关键字触发随机图片发送。"""
         config = await self._get_config()
