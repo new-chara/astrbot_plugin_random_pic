@@ -10,24 +10,6 @@
 - 支持递归搜索子目录
 - 支持 jpg / png / gif / webp / bmp 格式
 
-## 安装
-
-### 方式一：插件市场安装
-
-在 AstrBot WebUI 的「插件市场」中搜索 `astrbot_plugin_random_pic` 并安装。
-
-### 方式二：手动安装
-
-```bash
-# 进入 AstrBot 插件目录
-cd AstrBot/plugins
-
-# 克隆本仓库
-git clone https://github.com/new-chara/astrbot_plugin_random_pic.git
-
-# 重启 AstrBot
-```
-
 ## 配置
 
 在 AstrBot WebUI 中，进入「插件配置」页，找到「随机图片」插件进行配置。
@@ -109,22 +91,6 @@ docker run -d \
 
 也可以在 `AstrBot/data/` 目录下创建文件夹存放图片（该目录通常已经挂载），然后配置相对路径如 `./data/my_pics`。
 
-## 常见问题
-
-**Q: 发送关键字后没有反应？**
-
-1. 确认插件已在 WebUI 中「启用」
-2. 检查 `image_dir` 路径是否正确，目录是否存在
-3. 检查目录中是否有 `.jpg` `.png` `.gif` `.webp` `.bmp` 格式的图片
-4. 查看 AstrBot 日志，搜索 `[RandomPic]` 查看错误信息
-
-**Q: 如何同时使用多个图库？**
-
-复制插件目录，修改副本中 `metadata.yaml` 的 `name` 字段（不能重复），然后分别为每个实例配置不同的 `keyword` 和 `image_dir`。
-
-**Q: 可以一次触发发多张不同的图吗？**
-
-可以，将 `count` 设为你想要的数量即可，图片不会重复。
 
 ## 项目结构
 
