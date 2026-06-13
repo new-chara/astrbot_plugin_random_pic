@@ -1,4 +1,4 @@
-﻿{
+{
   "keyword": {
     "description": "触发关键字，直接发送该文字即可触发插件（留空则仅支持 /randompic 命令）",
     "type": "string",
