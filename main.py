@@ -2,7 +2,8 @@
 import random
 from pathlib import Path
 
-from astrbot.api.event import filter, AstrMessageEvent, EventMessageType
+from astrbot.api.event import filter, AstrMessageEvent
+from astrbot.api.event.filter import EventMessageType
 from astrbot.api.star import Context, Star
 from astrbot.api import logger
 
