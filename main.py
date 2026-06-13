@@ -22,21 +22,36 @@ class RandomPicPlugin(Star):
         """Load and return plugin config, with fallback defaults."""
         try:
             config = await self.context.get_config()
+            if not isinstance(config, dict):
+                config = dict(config) if config else {}
         except Exception:
             config = {}
 
         # 支持旧版 "keyword" 和新版 "keywords"（textarea，每行一个）两种配置
-        raw = config.get("keywords", config.get("keyword", "随机图片"))
+        raw = config.get("keywords") or config.get("keyword") or "随机图片"
         if isinstance(raw, str):
-            keywords = [k.strip() for k in raw.split("\n") if k.strip()]
+            keywords = [k.strip() for k in raw.replace("\r\n", "\n").split("\n") if k.strip()]
+        elif isinstance(raw, list):
+            keywords = [str(k).strip() for k in raw if str(k).strip()]
         else:
-            keywords = list(raw) if raw else []
+            keywords = []
+
+        image_dir = config.get("image_dir") or DEFAULT_IMAGE_DIR
+        count = max(1, int(config.get("count", 1)))
+        recursive = config.get("recursive", True)
+        if isinstance(recursive, str):
+            recursive = recursive.lower() in ("true", "1", "yes")
+
+        logger.info(
+            f"[RandomPic] 配置加载: keywords={keywords}, "
+            f"image_dir={image_dir}, count={count}, recursive={recursive}"
+        )
 
         return {
             "keywords": keywords,
-            "image_dir": config.get("image_dir") or DEFAULT_IMAGE_DIR,
-            "count": max(1, int(config.get("count", 1))),
-            "recursive": config.get("recursive", True),
+            "image_dir": image_dir,
+            "count": count,
+            "recursive": recursive,
         }
 
     def _collect_images(self, image_dir: str, recursive: bool) -> list:
